@@ -10,7 +10,7 @@ const client = new Client({
 
 client.connect((err: Error) => {
   if (err) {
-    console.error("DB connection error", err.stack);
+    console.error("$$$$$$$$$$$$$$$$$$$ DB connection error", err.stack);
   } else {
     console.log("connected to DB");
   }
