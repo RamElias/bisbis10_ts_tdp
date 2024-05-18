@@ -1,5 +1,5 @@
 import { Client, QueryResult } from 'pg';
-import { Restaurant } from '../models/restuarantModel';
+import { Restaurant } from '../models/models';
 import client from '../db/db';
 
 export const getAllRestaurants = async (): Promise<Restaurant[]> => {
