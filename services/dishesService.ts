@@ -1,4 +1,3 @@
-// services/dishService.ts
 import client from '../db/db';
 import { Dish } from '../models/models';
 

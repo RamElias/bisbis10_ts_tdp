@@ -1,10 +1,10 @@
-import { Client, QueryResult } from 'pg';
 import { Restaurant } from '../models/models';
 import client from '../db/db';
 
 export const getAllRestaurants = async (): Promise<Restaurant[]> => {
   try {
-    const result = await client.query('SELECT * FROM restaurants');   
+    const result = await client.query('SELECT * FROM restaurants');
+    console.log(`result: ${result}`)   
     return result.rows;
   } catch (error) {
     throw new Error(`Error fetching restaurants: ${error}`);
@@ -30,30 +30,29 @@ export const getRestaurantsByCuisine = async (cuisine: string): Promise<Restaura
 };
 
 export const addRestaurant = async (newRestaurant: Restaurant): Promise<Restaurant> => {
-  const { name, is_Kosher, cuisines, averageRating } = newRestaurant;
+  const { name, isKosher, cuisines, averageRating } = newRestaurant;
   try {
     const result = await client.query<Restaurant>(
-      'INSERT INTO restaurants (name, averageRating, is_kosher, cuisines) VALUES ($1, $2, $3, $4) RETURNING *',
-      [name, averageRating, is_Kosher, JSON.stringify(cuisines)]
+      'INSERT INTO restaurants (name, isKosher, cuisines, averageRating) VALUES ($1, $2, $3, $4) RETURNING *',
+      [name, isKosher, JSON.stringify(cuisines), averageRating]  // Ensure cuisines is handled according to your schema
     );
     return result.rows[0];
   } catch (error) {
+    console.error('Error adding restaurant:', error);  // Log the full error stack
     throw new Error(`Error adding restaurant: ${error}`);
   }
 };
 
+
 export const updateRestaurant = async (id: string, updatedRestaurant: Partial<Restaurant>): Promise<Restaurant | null> => {
   try {
-    // Destructure updatedRestaurant properties with default values
-    const { name = '', is_Kosher = false, cuisines = [], averageRating = 0 } = updatedRestaurant;
+    const { name = '', isKosher = false, cuisines = [], averageRating = 0 } = updatedRestaurant;
     
-    // Ensure cuisines is an array
     const cuisinesArray = Array.isArray(cuisines) ? cuisines : [cuisines];
 
-    // Execute the query
     const result = await client.query<Restaurant>(
-      'UPDATE restaurants SET name = $1, is_kosher = $2, cuisines = $3, averageRating = $4 WHERE id = $5 RETURNING *',
-      [name, is_Kosher, JSON.stringify(cuisinesArray), averageRating, id]
+      'UPDATE restaurants SET name = $1, isKosher = $2, cuisines = $3, averageRating = $4 WHERE id = $5 RETURNING *',
+      [name, isKosher, JSON.stringify(cuisinesArray), averageRating, id]
     );
 
     return result.rows[0] || null;

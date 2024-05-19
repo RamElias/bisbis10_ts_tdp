@@ -1,4 +1,3 @@
-// controllers/ratingsController.ts
 import { Request, Response } from 'express';
 import * as ratingService from '../services/ratingsService';
 

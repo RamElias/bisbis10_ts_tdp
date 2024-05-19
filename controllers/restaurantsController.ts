@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import * as restaurantService from '../services/restaurantService';
+import client from '../db/db';
+import { Restaurant } from '../models/models';
 
 export const getAllRestaurants = async (req: Request, res: Response) => {
   try {
@@ -38,16 +40,20 @@ export const getRestaurantsByCuisine = async (req: Request, res: Response) => {
   }
 };
 
-
-export const addRestaurant = async (req: Request, res: Response) => {
+export const addRestaurant = async (newRestaurant: Restaurant): Promise<Restaurant> => {
+  const { name, isKosher, cuisines, averageRating } = newRestaurant;
   try {
-    const newRestaurant = req.body;
-    const restaurant = await restaurantService.addRestaurant(newRestaurant);
-    res.status(201).json(restaurant);
+    const result = await client.query<Restaurant>(
+      'INSERT INTO restaurants (name, isKosher, cuisines, averageRating) VALUES ($1, $2, $3, $4) RETURNING *',
+      [name, isKosher, JSON.stringify(cuisines), averageRating]
+    );
+    return result.rows[0];
   } catch (error) {
-    res.status(500).json({ error });
+    console.error('Error adding restaurant:', error);
+    throw new Error(`Error adding restaurant: ${error}`);
   }
 };
+
 
 export const updateRestaurant = async (req: Request, res: Response) => {
   try {

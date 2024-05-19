@@ -13,11 +13,12 @@ dotenv.config();
 const app: Application = express();
 const port = process.env.PORT || 8000;
 
+app.use(express.json());
 app.use("/", routes);
 app.use("/restaurants", restaurantRoutes);
 app.use("/ratings", ratingsRoutes)
 app.use("/order", orderRoutes)
-app.use("/dishes", dishesRoutes)
+app.use("/restaurants", dishesRoutes)
 
 app.listen(port, () => {
   console.log(`Server is On at http://localhost:${port}`);
